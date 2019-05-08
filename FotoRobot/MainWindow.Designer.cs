@@ -163,7 +163,7 @@
             this.buttonSettings.Dock = System.Windows.Forms.DockStyle.Fill;
             this.buttonSettings.FlatAppearance.BorderSize = 0;
             this.buttonSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSettings.Image = global::FotoRobot.Properties.Resources.gear;
+            this.buttonSettings.Image = ((System.Drawing.Image)(resources.GetObject("buttonSettings.Image")));
             this.buttonSettings.Location = new System.Drawing.Point(3, 423);
             this.buttonSettings.Name = "buttonSettings";
             this.buttonSettings.Size = new System.Drawing.Size(66, 66);

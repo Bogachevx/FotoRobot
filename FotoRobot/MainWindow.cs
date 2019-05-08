@@ -54,6 +54,7 @@ namespace FotoRobot
                     try
                     {
                         byte[] buffer = new byte[1024];
+                        networkStream.ReadTimeout = 10000;
                         networkStream.Read(buffer, 0, 1024);
                         String rec = buffer.ToString();
                         rec = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
@@ -70,7 +71,10 @@ namespace FotoRobot
                             isSendSuccessful = true;
                         }
                         int a = 1;
-                    } catch (Exception exp) { }
+                    } catch (Exception exp) {
+
+                        isSendSuccessful = true;
+                    }
                 }
             }
         }
@@ -104,7 +108,6 @@ namespace FotoRobot
         {
             while (!killThreads)
             {
-                //updateParameters();
                 if (isProcessingRequired)
                 {
                     updateParameters();
@@ -139,6 +142,33 @@ namespace FotoRobot
         #region THREADFUNCTIONS
         private void sendingRequiredFunction()
         {
+            List<Point3F> points = getSendingVector();
+
+            TCPSend("DRAW");
+            waitResponse();
+            TCPSend((points.Count).ToString());
+            waitResponse();
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (isPointsSendingRequired)
+                {
+                    String msg = points[i].X.ToString() + ":" + points[i].Y.ToString() + ":" + (points[i].Z).ToString() + ":";
+                    TCPSend(msg);
+                    waitResponse();
+                }
+                else
+                {
+                    TCPSend("STOPDRAW");
+                    waitResponse();
+                    return;
+                }
+            }
+            TCPSend("ENDRECV");
+        }
+
+        private List<Point3F> getSendingVector()
+        {
             List<Point3F> points = new List<Point3F>();
             Point3F temp;
             for (int i = 0; i < Contours.Count; i++)
@@ -160,35 +190,8 @@ namespace FotoRobot
                 temp.Y = Contours[i][Contours[i].Count - 1].Y;
                 temp.Z = 15;
                 points.Add(temp);
-                //points.Add(Contours[i][Contours.Capacity]);
             }
-
-            //UDPSend("-3");
-            TCPSend("DRAW");
-            waitResponse();
-            //Thread.Sleep(100);
-            TCPSend((points.Count).ToString());
-            waitResponse();
-            //Thread.Sleep(100);
-            //UDPSend((points.Count-1).ToString());
-
-            for (int i = 0; i < points.Count; i++)
-            {
-                if (isPointsSendingRequired)
-                {
-                    String msg = points[i].X.ToString() + ":" + points[i].Y.ToString() + ":" + (points[i].Z).ToString() + ":";
-                    TCPSend(msg);
-                    waitResponse();
-                    //Thread.Sleep(100);
-                }
-                else
-                {
-                    TCPSend("STOPDRAW");
-                    waitResponse();
-                    return;
-                }
-            }
-            TCPSend("ENDRECV");
+            return points;
         }
 
         private void captureRequiredFunction()
@@ -353,8 +356,8 @@ namespace FotoRobot
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
                 Mat temp = new Mat();
-                temp = CvInvoke.Imread(fileDialog.FileName);
-                CvInvoke.Flip(temp, ROIFrame, Emgu.CV.CvEnum.FlipType.None);
+                ROIFrame = CvInvoke.Imread(fileDialog.FileName);
+                //CvInvoke.Flip(temp, ROIFrame, Emgu.CV.CvEnum.FlipType.None);
                 preprocessROIFrame();
                 isProcessingRequired = true;
                 buttonDraw.Enabled = true;
@@ -421,12 +424,40 @@ namespace FotoRobot
 
             }
         }
-      
+
+        protected override bool ProcessCmdKey(ref Message message, Keys keys)
+        {
+            switch (keys)
+            {
+                case Keys.Space:
+                    {
+                        buttonCamera_Click(new object(), new EventArgs());
+                        return true;
+                    }
+
+                case Keys.Enter:
+                    {
+                        if (isProcessingRequired)
+                        {
+                            buttonDraw_Click(new object(), new EventArgs());
+                        } else
+                        {
+                            buttonCapture_Click(new object(), new EventArgs());
+                        }
+                        return true;
+                    }
+                    // signal that we've processed this key
+            }
+
+            // run base implementation
+            return base.ProcessCmdKey(ref message, keys);
+        }
+
         private void setupTCP()
         {
             try
             {
-                TCP = new TcpClient("192.168.1.36", 49152);
+                TCP = new TcpClient("192.168.0.2", 49152);
                 networkStream = TCP.GetStream();
                 //clientStreamWriter = new StreamWriter(networkStream);
             }
@@ -667,6 +698,10 @@ namespace FotoRobot
             String date = DateTime.Now.ToShortDateString() + "-"
                 + DateTime.Now.ToLongTimeString().Replace(':', '.');
             path = path + "/" + date + ".jpg";
+            Mat temp = new Mat();
+            
+            CvInvoke.Flip(ROIFrame, temp, Emgu.CV.CvEnum.FlipType.None);
+            CvInvoke.Imwrite(path, temp);
 
         }
 

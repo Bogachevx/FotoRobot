@@ -118,6 +118,7 @@
   <ItemGroup>
     <Content Include="icons8-robot-filled-96.ico" />
     <Content Include="License-LGPL.txt" />
+    <None Include="Resources\icons8-settings-filled-64.png" />
     <None Include="Resources\icons8-loadfilled-64.png" />
     <None Include="Resources\icons8-robot-filled-96.ico" />
     <None Include="Resources\icons8-gear-filled-64.png" />

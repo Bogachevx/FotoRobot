@@ -1,6 +1,8 @@
 .INTER_PANEL_D
 0,10,"","RUN PC","","",10,4,15,1,pcexec fotorobotpc,0
 1,10,"","STOP PC","","",10,4,15,2,stopcon = true,0
+5,14,"uploaded","Uploaded","",10,15,0
+6,14,"percent","Drawn","",10,15,0
 28,10,"","Start","setup","",10,4,15,3,pcexec 2: fotorobotsetup,0
 37,3,"","","","",10,4,15,0,0,0,0,0
 .END
@@ -73,107 +75,114 @@ stop:
 				JMOVE #endp
 				JMOVE #hp
 				$State =  "STOP"
-
+				drawFinished = true
 			$action = ""
 					
 		END
 	END
 .end
 .PROGRAM fotorobotpc()
-	port = 49152 
+  port = 49152 
     max_length = 255 
-    tout_open = 60 
+    tout_open = 5 
     tout_rec = 5 
-	text_id = 0 
+  text_id = 0 
     tout = 60 
     eret = 0 
-	rret = 0
-	stopCon = FALSE;
-	;WHILE TRUE DO
+  rret = 0
+  stopCon = FALSE;
+  ;WHILE TRUE DO
 con_begin:
-	CALL open_socket     ;Connecting communication 
-	IF sock_id < 0    THEN 
-		GOTO  con_begin 
-	END
-	PRINT  "Connection established"
-cyc_begin:
+  IF TASK(1)<>1 THEN
+    MC execute fotorobot 
+  END 
+  CALL open_socket     ;Connecting communication 
+  IF sock_id < 0    THEN 
 	IF stopCon == TRUE THEN
 		GOTO exit
 	END
-	tout_rec = 5
-	CALL recv        ;Receiving the result of processing 1 
-	IF rret == -34024  THEN 
-		PRINT  "Recieve timeout" 
-		GOTO  cyc_begin 
-	END
-	IF rret == -34025  THEN 
-		PRINT  "Connection error" 
-		CALL close_socket
-		GOTO  con_begin 
-	END
-	IF rret == 0 THEN
-		
-		PRINT $recv_buf[1]
-		IF $recv_buf[1] == "AIM" THEN
-			$action = "AIM"
-		END
-		IF $recv_buf[1] == "HOME" THEN
-			$action = "HOME"
-		END
-		IF $recv_buf[1] == "DRAW" THEN
-			tout_rec = 60 
-			CALL recv
-			points_length = VAL($recv_buf[1])
-			PRINT  "Points len", points_length 
-			
-			eret = 0 
-			$sdata[1] = "OK" 
-			CALL  send(eret,$sdata[1])
-			
-			$fin = ""
-			recieved_point = 0
-			WHILE $fin == "" DO
-				CALL recv
-				IF $recv_buf[1] == "STOPDRAW" THEN
-					$fin = "OK"
-					$action = "STOPDRAW
-					eret = 0 
-					$sdata[1] = "OK" 
-					CALL  send(eret,$sdata[1])
-					GOTO recv_end
-				END
-				IF $recv_buf[1] == "ENDRECV" THEN
-					$fin = "OK"
-				ELSE
-					FOR i = 0 TO 2 STEP 1
-						$temp = $DECODE($recv_buf[1],":",0)
-						dpt[recieved_point,i] = VAL($temp)
-						PRINT  dpt[ recieved_point, i]
-						$temp = $DECODE($recv_buf[1] ,":",1)
-					END
-					recieved_point = recieved_point + 1
-					IF recieved_point*100/points_length > 5 THEN; recieved_point==50 THEN
-						$action = "DRAW"
-					END
-					
-					$Uploaded = $ENCODE(/F6.2, recieved_point*100/points_length) + " %"
-				END
+    GOTO  con_begin 
+  END
+  PRINT  "Connection established"
+cyc_begin:
+  IF stopCon == TRUE THEN
+    GOTO exit
+  END
+  tout_rec = 5
+  CALL recv        ;Receiving the result of processing 1 
+  IF rret == -34024  THEN 
+    PRINT  "Recieve timeout" 
+    GOTO  cyc_begin 
+  END
+  IF rret == -34025  THEN 
+    PRINT  "Connection error" 
+    CALL close_socket
+    GOTO  con_begin 
+  END
+  IF rret == 0 THEN
+    
+    PRINT $recv_buf[1]
+    IF $recv_buf[1] == "AIM" THEN
+      $action = "AIM"
+    END
+    IF $recv_buf[1] == "HOME" THEN
+      $action = "HOME"
+    END
+    IF $recv_buf[1] == "DRAW" THEN
+	drawFinished = false
+	  $sdata[1] = "OK" 
+      CALL  send(eret,$sdata[1])
+      tout_rec = 60 
+      CALL recv
+      points_length = VAL($recv_buf[1])
+      PRINT  "Points len", points_length 
+      
+      eret = 0 
+      $sdata[1] = "OK" 
+      CALL  send(eret,$sdata[1])
+      
+      $fin = ""
+      recieved_point = 0
+      WHILE $fin == "" DO
+        CALL recv
+        IF $recv_buf[1] == "STOPDRAW" THEN
+          $fin = "OK"
+          $action = "STOPDRAW"
+          eret = 0 
+          $sdata[1] = "OK" 
+          CALL  send(eret,$sdata[1])
+          GOTO recv_end
+        END
+        IF $recv_buf[1] == "ENDRECV" THEN
+          $fin = "OK"
+        ELSE
+          FOR i = 0 TO 2 STEP 1
+            $temp = $DECODE($recv_buf[1],":",0)
+            dpt[recieved_point,i] = VAL($temp)
+            PRINT  dpt[ recieved_point, i]
+            $temp = $DECODE($recv_buf[1] ,":",1)
+          END
+          recieved_point = recieved_point + 1
+          IF recieved_point*100/points_length > 5 THEN; recieved_point==50 THEN
+            $action = "DRAW"
+          END
+          
+          $Uploaded = $ENCODE(/F6.2, recieved_point*100/points_length) + " %"
+        END
 recv_end:
-				eret = 0 
-				$sdata[1] = "OK" 
-				CALL  send(eret,$sdata[1])
-				
-			END
-			
-		END
-	
-	END
-	eret = 0 
-    $sdata[1] = "Resp" 
-    CALL  send(eret,$sdata[1])
-	
-	
-	GOTO cyc_begin
+        eret = 0 
+        $sdata[1] = "OK" 
+        CALL  send(eret,$sdata[1])
+        
+      END
+	  wait drawFinished == true
+	  $sdata[1] = "DRAWOK" 
+	  CALL  send(eret,$sdata[1])
+    END
+  
+  END
+  
+  GOTO cyc_begin
     ;END    
 exit: 
     CALL    close_socket   ;Closing communication 
@@ -292,9 +301,9 @@ exit:
 	; 
 	; @@@ INSPECTION @@@
 	; @@@ CONNECTION @@@
-	; 
-	; 
-	; 
+	; Standard
+	; 192.168.0.2
+	; 23
 	; @@@ PROGRAM @@@
 	; 0:close_socket
 	; 0:fotorobot
