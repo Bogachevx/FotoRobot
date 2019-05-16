@@ -26,6 +26,7 @@ namespace FotoRobot
         List<List<PointF>> Contours;
 
         Parameters parameters;
+        Parameters[] presets = new Parameters[12];
 
         bool isCaptureRequired;
         bool isFrameRequired;
@@ -719,6 +720,10 @@ namespace FotoRobot
             }
         }
 
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 
 
