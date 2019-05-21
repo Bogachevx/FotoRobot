@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace FotoRobot
 {
@@ -365,6 +366,232 @@ namespace FotoRobot
             }
         }
 
+        private void isAdaptiveCanny_CheckedChanged(object sender, EventArgs e)
+        {
+            if (isAdaptiveCanny.Checked)
+            {
+                cannyThreshold1.Enabled = false;
+                cannyThreshold2.Enabled = false;
+            }
+            else
+            {
+                cannyThreshold1.Enabled = true;
+                cannyThreshold2.Enabled = true;
+            }
+        }
+
+
+        protected override bool ProcessCmdKey(ref Message message, Keys keys)
+        {
+            switch (keys)
+            {
+                case Keys.Space:
+                    {
+                        buttonCamera_Click(new object(), new EventArgs());
+                        return true;
+                    }
+
+                case Keys.Enter:
+                    {
+                        if (isProcessingRequired)
+                        {
+                            buttonDraw_Click(new object(), new EventArgs());
+                        }
+                        else
+                        {
+                            buttonCapture_Click(new object(), new EventArgs());
+                        }
+                        return true;
+                    }
+                case (Keys.F1 | Keys.Control):
+                    {
+                        savePreset(0);
+                        return true;
+                    }
+                case (Keys.F2 | Keys.Control):
+                    {
+                        savePreset(1);
+                        return true;
+                    }
+                case (Keys.F3 | Keys.Control):
+                    {
+                        savePreset(2);
+                        return true;
+                    }
+                case (Keys.F4 | Keys.Control):
+                    {
+                        savePreset(3);
+                        return true;
+                    }
+                case (Keys.F5 | Keys.Control):
+                    {
+                        savePreset(4);
+                        return true;
+                    }
+                case (Keys.F6 | Keys.Control):
+                    {
+                        savePreset(5);
+                        return true;
+                    }
+                case (Keys.F7 | Keys.Control):
+                    {
+                        savePreset(6);
+                        return true;
+                    }
+                case (Keys.F8 | Keys.Control):
+                    {
+                        savePreset(7);
+                        return true;
+                    }
+                case (Keys.F9 | Keys.Control):
+                    {
+                        savePreset(8);
+                        return true;
+                    }
+                case (Keys.F10 | Keys.Control):
+                    {
+                        savePreset(9);
+                        return true;
+                    }
+                case (Keys.F11 | Keys.Control):
+                    {
+                        savePreset(10);
+                        return true;
+                    }
+                case (Keys.F12 | Keys.Control):
+                    {
+                        savePreset(11);
+                        return true;
+                    }
+                case (Keys.F1):
+                    {
+                        loadPreset(0);
+                        return true;
+                    }
+                case (Keys.F2):
+                    {
+                        loadPreset(1);
+                        return true;
+                    }
+                case (Keys.F3):
+                    {
+                        loadPreset(2);
+                        return true;
+                    }
+                case (Keys.F4):
+                    {
+                        loadPreset(3);
+                        return true;
+                    }
+                case (Keys.F5):
+                    {
+                        loadPreset(4);
+                        return true;
+                    }
+                case (Keys.F6):
+                    {
+                        loadPreset(5);
+                        return true;
+                    }
+                case (Keys.F7):
+                    {
+                        loadPreset(6);
+                        return true;
+                    }
+                case (Keys.F8):
+                    {
+                        loadPreset(7);
+                        return true;
+                    }
+                case (Keys.F9):
+                    {
+                        loadPreset(8);
+                        return true;
+                    }
+                case (Keys.F10):
+                    {
+                        loadPreset(9);
+                        return true;
+                    }
+                case (Keys.F11):
+                    {
+                        loadPreset(10);
+                        return true;
+                    }
+                case (Keys.F12):
+                    {
+                        loadPreset(11);
+                        return true;
+                    }
+            }
+
+            return base.ProcessCmdKey(ref message, keys);
+        }
+
+        #endregion
+
+        #region WORKWITHPRESETS
+
+        public void savePresetToFile(int presetNumber)
+        {
+            String path = "presets";
+            checkSaveFolderExist(path);
+            StreamWriter streamWriter = new StreamWriter("presets/" + presetNumber.ToString());
+            XmlSerializer x = new XmlSerializer(presets[presetNumber].GetType());
+            x.Serialize(streamWriter, presets[presetNumber]);
+        }
+
+        public void loadPresetFromFile(int presetNumber)
+        {
+            try
+            {
+                String path = "presets";
+                XmlSerializer ser = new XmlSerializer(presets[presetNumber].GetType());
+                using (FileStream fs = new FileStream(path + "/" + presetNumber.ToString(),
+                    FileMode.Open))
+                {
+                    presets[presetNumber] = (Parameters)ser.Deserialize(fs);
+                }
+            }
+            catch (Exception exp) { };
+
+        }
+
+        public void savePreset(int presetNumber)
+        {
+            presets[presetNumber] = parameters;
+        }
+
+        public void loadPreset(int presetNumber)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() =>
+                {
+                    cannyThreshold1.Value = presets[presetNumber].cannyThreshold1; //cannyThreshold1.Value;
+                    cannyThreshold2.Value = presets[presetNumber].cannyThreshold2;
+                    BlurValue.Text = presets[presetNumber].blurValue.ToString();
+                    ApproximationEpsilon.Value = (int)presets[presetNumber].approximationEpsilon;
+                    MinContLength.Value = presets[presetNumber].minContLength;
+                    isAdaptiveCanny.Checked = presets[presetNumber].isAdaptive;
+                    ROIWidth.Value = presets[presetNumber].ROISize.Width;
+                    ROIHeight.Value = presets[presetNumber].ROISize.Height;
+                }));
+
+            }
+            else
+            {
+                cannyThreshold1.Value = presets[presetNumber].cannyThreshold1;
+                cannyThreshold2.Value = presets[presetNumber].cannyThreshold2;
+                BlurValue.Text = presets[presetNumber].blurValue.ToString();
+                ApproximationEpsilon.Value = (int)presets[presetNumber].approximationEpsilon;
+                MinContLength.Value = presets[presetNumber].minContLength;
+                isAdaptiveCanny.Checked = presets[presetNumber].isAdaptive;
+                ROIWidth.Value = presets[presetNumber].ROISize.Width;
+                ROIHeight.Value = presets[presetNumber].ROISize.Height;
+            }
+        }
+
         #endregion
 
         public MainWindow()
@@ -413,6 +640,7 @@ namespace FotoRobot
             {
                 Invoke(new MethodInvoker(() =>
                 {
+                    parameters.ROIPosition = ROI.Location;
                     parameters.cannyThreshold1 = cannyThreshold1.Value;
                     parameters.cannyThreshold2 = cannyThreshold2.Value;
                     parameters.blurValue = Convert.ToInt32(BlurValue.SelectedItem);
@@ -424,34 +652,6 @@ namespace FotoRobot
                 }));
 
             }
-        }
-
-        protected override bool ProcessCmdKey(ref Message message, Keys keys)
-        {
-            switch (keys)
-            {
-                case Keys.Space:
-                    {
-                        buttonCamera_Click(new object(), new EventArgs());
-                        return true;
-                    }
-
-                case Keys.Enter:
-                    {
-                        if (isProcessingRequired)
-                        {
-                            buttonDraw_Click(new object(), new EventArgs());
-                        } else
-                        {
-                            buttonCapture_Click(new object(), new EventArgs());
-                        }
-                        return true;
-                    }
-                    // signal that we've processed this key
-            }
-
-            // run base implementation
-            return base.ProcessCmdKey(ref message, keys);
         }
 
         private void setupTCP()
@@ -599,8 +799,11 @@ namespace FotoRobot
             MinContLength.Value = Properties.Settings.Default.minContLen;
             parameters.paperSize = Properties.Settings.Default.paperSize;
             parameters.cameraResolution = Properties.Settings.Default.cameraResolution;
-            
 
+            for (int i = 0; i < 12; i++)
+            {
+                loadPresetFromFile(i);
+            }
         }
 
         private void SaveSettings()
@@ -616,6 +819,10 @@ namespace FotoRobot
             Properties.Settings.Default.cameraResolution = parameters.cameraResolution;
             Properties.Settings.Default.paperSize = parameters.paperSize;
             Properties.Settings.Default.Save();
+            for (int i = 0; i < 12; i++)
+            {
+                savePresetToFile(i);
+            } 
         }
 
         private bool setupCamera()
@@ -685,7 +892,6 @@ namespace FotoRobot
        
         private void checkSaveFolderExist(String path)
         {
-            //String path = "pics";
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -706,30 +912,5 @@ namespace FotoRobot
 
         }
 
-        private void isAdaptiveCanny_CheckedChanged(object sender, EventArgs e)
-        {
-            if (isAdaptiveCanny.Checked)
-            {
-                cannyThreshold1.Enabled = false;
-                cannyThreshold2.Enabled = false;
-            }
-            else
-            {
-                cannyThreshold1.Enabled = true;
-                cannyThreshold2.Enabled = true;
-            }
-        }
-
-        private void MainWindow_Load(object sender, EventArgs e)
-        {
-
-        }
     }
-
-
-
-
-
-
-
 }
