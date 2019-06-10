@@ -257,7 +257,7 @@ namespace FotoRobot
                 isCaptureRequired = false;
                 buttonCamera.Image = Properties.Resources.play;
                 buttonCapture.Enabled = false;
-
+                TCPSend("HOME");
             }
             else
             {
@@ -279,7 +279,7 @@ namespace FotoRobot
             buttonDraw.Enabled = true;
             buttonCapture.Enabled = false;
             buttonCamera.Image = Properties.Resources.play;
-            TCPSend("HOME");
+            TCPSend("WAIT");
         }
 
         private void buttonSliders_Click(object sender, EventArgs e)
@@ -559,7 +559,9 @@ namespace FotoRobot
 
         public void savePreset(int presetNumber)
         {
+
             presets[presetNumber] = parameters;
+            savePresetToFile(presetNumber);
         }
 
         public void loadPreset(int presetNumber)
@@ -821,7 +823,7 @@ namespace FotoRobot
             Properties.Settings.Default.Save();
             for (int i = 0; i < 12; i++)
             {
-                savePresetToFile(i);
+                //savePresetToFile(i);
             } 
         }
 
