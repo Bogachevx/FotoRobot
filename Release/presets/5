@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <cameraResolution>
+    <Width>1280</Width>
+    <Height>720</Height>
+  </cameraResolution>
+  <ROISize>
+    <Width>300</Width>
+    <Height>300</Height>
+  </ROISize>
+  <ROIPosition>
+    <X>182</X>
+    <Y>115</Y>
+  </ROIPosition>
+  <cannyThreshold1>53</cannyThreshold1>
+  <cannyThreshold2>148</cannyThreshold2>
+  <approximationEpsilon>231</approximationEpsilon>
+  <minContLength>48</minContLength>
+  <blurValue>3</blurValue>
+  <isAdaptive>false</isAdaptive>
+  <paperSize>
+    <Width>180</Width>
+    <Height>260</Height>
+  </paperSize>
+</Parameters>
