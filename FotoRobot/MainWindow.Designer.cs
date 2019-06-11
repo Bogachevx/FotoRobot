@@ -34,29 +34,32 @@
             this.buttonLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.buttonCamera = new System.Windows.Forms.Button();
             this.buttonCapture = new System.Windows.Forms.Button();
-            this.buttonSliders = new System.Windows.Forms.Button();
             this.buttonDraw = new System.Windows.Forms.Button();
             this.buttonSettings = new System.Windows.Forms.Button();
             this.buttonLoad = new System.Windows.Forms.Button();
-            this.imageView = new Emgu.CV.UI.ImageBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.ROIWidth = new FotoRobot.CTrackBar();
-            this.cannyThreshold1 = new FotoRobot.CTrackBar();
-            this.cannyThreshold2 = new FotoRobot.CTrackBar();
             this.isAdaptiveCanny = new System.Windows.Forms.CheckBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.ROIHeight = new FotoRobot.CTrackBar();
             this.panelBlur = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.BlurValue = new System.Windows.Forms.ComboBox();
+            this.conStatus = new System.Windows.Forms.Label();
+            this.imagePanels = new System.Windows.Forms.TableLayoutPanel();
+            this.imageView = new Emgu.CV.UI.ImageBox();
+            this.originalView = new Emgu.CV.UI.ImageBox();
+            this.ROIWidth = new FotoRobot.CTrackBar();
+            this.cannyThreshold1 = new FotoRobot.CTrackBar();
+            this.cannyThreshold2 = new FotoRobot.CTrackBar();
+            this.ROIHeight = new FotoRobot.CTrackBar();
             this.MinContLength = new FotoRobot.CTrackBar();
             this.ApproximationEpsilon = new FotoRobot.CTrackBar();
-            this.conStatus = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.mainLayoutPanel.SuspendLayout();
             this.buttonLayoutPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.imageView)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelBlur.SuspendLayout();
+            this.imagePanels.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.imageView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.originalView)).BeginInit();
             this.SuspendLayout();
             // 
             // mainLayoutPanel
@@ -66,8 +69,8 @@
             this.mainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.mainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
             this.mainLayoutPanel.Controls.Add(this.buttonLayoutPanel, 0, 0);
-            this.mainLayoutPanel.Controls.Add(this.imageView, 1, 0);
             this.mainLayoutPanel.Controls.Add(this.tableLayoutPanel1, 2, 0);
+            this.mainLayoutPanel.Controls.Add(this.imagePanels, 1, 0);
             this.mainLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.mainLayoutPanel.Name = "mainLayoutPanel";
@@ -82,7 +85,6 @@
             this.buttonLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.buttonLayoutPanel.Controls.Add(this.buttonCamera, 0, 1);
             this.buttonLayoutPanel.Controls.Add(this.buttonCapture, 0, 2);
-            this.buttonLayoutPanel.Controls.Add(this.buttonSliders, 0, 4);
             this.buttonLayoutPanel.Controls.Add(this.buttonDraw, 0, 3);
             this.buttonLayoutPanel.Controls.Add(this.buttonSettings, 0, 8);
             this.buttonLayoutPanel.Controls.Add(this.buttonLoad, 0, 6);
@@ -130,20 +132,6 @@
             this.buttonCapture.UseVisualStyleBackColor = true;
             this.buttonCapture.Click += new System.EventHandler(this.buttonCapture_Click);
             // 
-            // buttonSliders
-            // 
-            this.buttonSliders.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonSliders.Enabled = false;
-            this.buttonSliders.FlatAppearance.BorderSize = 0;
-            this.buttonSliders.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.buttonSliders.Image = global::FotoRobot.Properties.Resources.slideron;
-            this.buttonSliders.Location = new System.Drawing.Point(3, 239);
-            this.buttonSliders.Name = "buttonSliders";
-            this.buttonSliders.Size = new System.Drawing.Size(66, 66);
-            this.buttonSliders.TabIndex = 4;
-            this.buttonSliders.UseVisualStyleBackColor = true;
-            this.buttonSliders.Click += new System.EventHandler(this.buttonSliders_Click);
-            // 
             // buttonDraw
             // 
             this.buttonDraw.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -183,19 +171,6 @@
             this.buttonLoad.UseVisualStyleBackColor = true;
             this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
             // 
-            // imageView
-            // 
-            this.imageView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.imageView.FunctionalMode = Emgu.CV.UI.ImageBox.FunctionalModeOption.RightClickMenu;
-            this.imageView.Location = new System.Drawing.Point(81, 3);
-            this.imageView.Name = "imageView";
-            this.imageView.Size = new System.Drawing.Size(551, 527);
-            this.imageView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.imageView.TabIndex = 2;
-            this.imageView.TabStop = false;
-            this.imageView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.imageView_MouseDown);
-            this.imageView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.imageView_MouseMove);
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 1;
@@ -204,12 +179,12 @@
             this.tableLayoutPanel1.Controls.Add(this.cannyThreshold1, 0, 7);
             this.tableLayoutPanel1.Controls.Add(this.cannyThreshold2, 0, 8);
             this.tableLayoutPanel1.Controls.Add(this.isAdaptiveCanny, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.checkBox1, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.ROIHeight, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.panelBlur, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.MinContLength, 0, 11);
             this.tableLayoutPanel1.Controls.Add(this.ApproximationEpsilon, 0, 10);
             this.tableLayoutPanel1.Controls.Add(this.conStatus, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.checkBox1, 0, 4);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(638, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -229,6 +204,105 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(294, 527);
             this.tableLayoutPanel1.TabIndex = 3;
+            // 
+            // isAdaptiveCanny
+            // 
+            this.isAdaptiveCanny.AutoSize = true;
+            this.isAdaptiveCanny.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.isAdaptiveCanny.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.isAdaptiveCanny.Dock = System.Windows.Forms.DockStyle.Left;
+            this.isAdaptiveCanny.Location = new System.Drawing.Point(3, 218);
+            this.isAdaptiveCanny.Name = "isAdaptiveCanny";
+            this.isAdaptiveCanny.Size = new System.Drawing.Size(103, 19);
+            this.isAdaptiveCanny.TabIndex = 3;
+            this.isAdaptiveCanny.Text = "Adaptive canny:";
+            this.isAdaptiveCanny.UseVisualStyleBackColor = true;
+            this.isAdaptiveCanny.CheckedChanged += new System.EventHandler(this.isAdaptiveCanny_CheckedChanged);
+            // 
+            // panelBlur
+            // 
+            this.panelBlur.Controls.Add(this.label1);
+            this.panelBlur.Controls.Add(this.BlurValue);
+            this.panelBlur.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelBlur.Location = new System.Drawing.Point(3, 168);
+            this.panelBlur.Name = "panelBlur";
+            this.panelBlur.Size = new System.Drawing.Size(288, 44);
+            this.panelBlur.TabIndex = 6;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 4);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Blur level:";
+            // 
+            // BlurValue
+            // 
+            this.BlurValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.BlurValue.FormattingEnabled = true;
+            this.BlurValue.Items.AddRange(new object[] {
+            "1",
+            "3",
+            "5",
+            "7",
+            "9",
+            "11",
+            "13",
+            "15"});
+            this.BlurValue.Location = new System.Drawing.Point(3, 20);
+            this.BlurValue.Name = "BlurValue";
+            this.BlurValue.Size = new System.Drawing.Size(79, 21);
+            this.BlurValue.TabIndex = 0;
+            // 
+            // conStatus
+            // 
+            this.conStatus.AutoSize = true;
+            this.conStatus.Location = new System.Drawing.Point(3, 0);
+            this.conStatus.Name = "conStatus";
+            this.conStatus.Size = new System.Drawing.Size(35, 13);
+            this.conStatus.TabIndex = 9;
+            this.conStatus.Text = "label2";
+            // 
+            // imagePanels
+            // 
+            this.imagePanels.ColumnCount = 2;
+            this.imagePanels.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50.63521F));
+            this.imagePanels.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 49.36479F));
+            this.imagePanels.Controls.Add(this.originalView, 0, 0);
+            this.imagePanels.Controls.Add(this.imageView, 1, 0);
+            this.imagePanels.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imagePanels.Location = new System.Drawing.Point(81, 3);
+            this.imagePanels.Name = "imagePanels";
+            this.imagePanels.RowCount = 1;
+            this.imagePanels.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.imagePanels.Size = new System.Drawing.Size(551, 527);
+            this.imagePanels.TabIndex = 4;
+            // 
+            // imageView
+            // 
+            this.imageView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.imageView.FunctionalMode = Emgu.CV.UI.ImageBox.FunctionalModeOption.RightClickMenu;
+            this.imageView.Location = new System.Drawing.Point(281, 3);
+            this.imageView.Name = "imageView";
+            this.imageView.Size = new System.Drawing.Size(267, 521);
+            this.imageView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.imageView.TabIndex = 3;
+            this.imageView.TabStop = false;
+            this.imageView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.imageView_MouseDown);
+            this.imageView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.imageView_MouseMove);
+            // 
+            // originalView
+            // 
+            this.originalView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.originalView.FunctionalMode = Emgu.CV.UI.ImageBox.FunctionalModeOption.PanAndZoom;
+            this.originalView.Location = new System.Drawing.Point(3, 3);
+            this.originalView.Name = "originalView";
+            this.originalView.Size = new System.Drawing.Size(272, 521);
+            this.originalView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.originalView.TabIndex = 5;
+            this.originalView.TabStop = false;
             // 
             // ROIWidth
             // 
@@ -272,31 +346,6 @@
             this.cannyThreshold2.TrackbarLabel = "Canny threshold 2:";
             this.cannyThreshold2.Value = 1;
             // 
-            // isAdaptiveCanny
-            // 
-            this.isAdaptiveCanny.AutoSize = true;
-            this.isAdaptiveCanny.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.isAdaptiveCanny.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.isAdaptiveCanny.Dock = System.Windows.Forms.DockStyle.Left;
-            this.isAdaptiveCanny.Location = new System.Drawing.Point(3, 218);
-            this.isAdaptiveCanny.Name = "isAdaptiveCanny";
-            this.isAdaptiveCanny.Size = new System.Drawing.Size(103, 19);
-            this.isAdaptiveCanny.TabIndex = 3;
-            this.isAdaptiveCanny.Text = "Adaptive canny:";
-            this.isAdaptiveCanny.UseVisualStyleBackColor = true;
-            this.isAdaptiveCanny.CheckedChanged += new System.EventHandler(this.isAdaptiveCanny_CheckedChanged);
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBox1.Location = new System.Drawing.Point(3, 143);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(288, 19);
-            this.checkBox1.TabIndex = 4;
-            this.checkBox1.Text = "checkBox1";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
             // ROIHeight
             // 
             this.ROIHeight.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -310,43 +359,6 @@
             this.ROIHeight.TabIndex = 5;
             this.ROIHeight.TrackbarLabel = "ROI Height:";
             this.ROIHeight.Value = 1;
-            // 
-            // panelBlur
-            // 
-            this.panelBlur.Controls.Add(this.label1);
-            this.panelBlur.Controls.Add(this.BlurValue);
-            this.panelBlur.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBlur.Location = new System.Drawing.Point(3, 168);
-            this.panelBlur.Name = "panelBlur";
-            this.panelBlur.Size = new System.Drawing.Size(288, 44);
-            this.panelBlur.TabIndex = 6;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Blur level:";
-            // 
-            // BlurValue
-            // 
-            this.BlurValue.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.BlurValue.FormattingEnabled = true;
-            this.BlurValue.Items.AddRange(new object[] {
-            "1",
-            "3",
-            "5",
-            "7",
-            "9",
-            "11",
-            "13",
-            "15"});
-            this.BlurValue.Location = new System.Drawing.Point(3, 20);
-            this.BlurValue.Name = "BlurValue";
-            this.BlurValue.Size = new System.Drawing.Size(79, 21);
-            this.BlurValue.TabIndex = 0;
             // 
             // MinContLength
             // 
@@ -376,14 +388,15 @@
             this.ApproximationEpsilon.TrackbarLabel = "Approximation epsilon:";
             this.ApproximationEpsilon.Value = 1;
             // 
-            // conStatus
+            // checkBox1
             // 
-            this.conStatus.AutoSize = true;
-            this.conStatus.Location = new System.Drawing.Point(3, 0);
-            this.conStatus.Name = "conStatus";
-            this.conStatus.Size = new System.Drawing.Size(35, 13);
-            this.conStatus.TabIndex = 9;
-            this.conStatus.Text = "label2";
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(3, 143);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(80, 17);
+            this.checkBox1.TabIndex = 10;
+            this.checkBox1.Text = "checkBox1";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // MainWindow
             // 
@@ -399,11 +412,13 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainWindow_FormClosing);
             this.mainLayoutPanel.ResumeLayout(false);
             this.buttonLayoutPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.imageView)).EndInit();
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.panelBlur.ResumeLayout(false);
             this.panelBlur.PerformLayout();
+            this.imagePanels.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.imageView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.originalView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -411,18 +426,15 @@
         #endregion
 
         private System.Windows.Forms.Button buttonCamera;
-        private Emgu.CV.UI.ImageBox imageView;
         private System.Windows.Forms.Button buttonCapture;
         private System.Windows.Forms.TableLayoutPanel mainLayoutPanel;
         private System.Windows.Forms.TableLayoutPanel buttonLayoutPanel;
-        private System.Windows.Forms.Button buttonSliders;
         private System.Windows.Forms.Button buttonDraw;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private CTrackBar ROIWidth;
         private CTrackBar cannyThreshold1;
         private CTrackBar cannyThreshold2;
         private System.Windows.Forms.CheckBox isAdaptiveCanny;
-        private System.Windows.Forms.CheckBox checkBox1;
         private CTrackBar ROIHeight;
         private System.Windows.Forms.Panel panelBlur;
         private System.Windows.Forms.Label label1;
@@ -432,6 +444,10 @@
         private System.Windows.Forms.Button buttonSettings;
         private System.Windows.Forms.Label conStatus;
         private System.Windows.Forms.Button buttonLoad;
+        private System.Windows.Forms.TableLayoutPanel imagePanels;
+        private Emgu.CV.UI.ImageBox imageView;
+        private Emgu.CV.UI.ImageBox originalView;
+        private System.Windows.Forms.CheckBox checkBox1;
         //private CTrackbar cTrackbar1;
     }
 }

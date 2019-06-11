@@ -25,7 +25,7 @@ namespace FotoRobot
         Size FrameSize;
         Rectangle ROI;
         List<List<PointF>> Contours;
-
+        Rectangle eraser;
         Parameters parameters;
         Parameters[] presets = new Parameters[12];
 
@@ -33,7 +33,7 @@ namespace FotoRobot
         bool isFrameRequired;
         bool isProcessingRequired;
         bool isPointsSendingRequired;
-
+        bool isConnected;
         bool killThreads = false;
 
         TcpClient TCP;
@@ -64,6 +64,7 @@ namespace FotoRobot
                         {
                             if (InvokeRequired) { Invoke(new MethodInvoker(() => {
                                 buttonDraw.Image = Properties.Resources.paint;
+                                buttonDraw.Enabled = true;
                                 buttonCapture.Enabled = true;
                             })); }
 
@@ -124,11 +125,11 @@ namespace FotoRobot
             {
                 if (TCP != null)
                 {
-                    if (conStatus.InvokeRequired) { conStatus.Invoke(new MethodInvoker(() => { conStatus.Text = "CONNECTED"; })); }
+                    if (conStatus.InvokeRequired) { conStatus.Invoke(new MethodInvoker(() => { conStatus.Text = "CONNECTED"; isConnected = true; })); }
 
                     if (TCP != null && !isClientConnected())
                     {
-                        if (conStatus.InvokeRequired) { conStatus.Invoke(new MethodInvoker(() => { conStatus.Text = "DISCONNECTED"; })); }
+                        if (conStatus.InvokeRequired) { conStatus.Invoke(new MethodInvoker(() => { conStatus.Text = "DISCONNECTED"; isConnected = false; })); }
                         TCP = null;
                     }
                 }
@@ -167,6 +168,12 @@ namespace FotoRobot
                 }
             }
             TCPSend("ENDRECV");
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => {
+                    buttonDraw.Enabled = false;
+                }));
+            }
         }
 
         private List<Point3F> getSendingVector()
@@ -220,9 +227,24 @@ namespace FotoRobot
             }
         }
 
+        bool onceCanny = false;
+        Mat CannyFrame = null;
         private void processingRequiredFunction()
         {
-            Mat CannyFrame = getCannyImage();
+            
+            if (checkBox1.Checked)
+            {
+                onceCanny = true;
+                if (!onceCanny)
+                {
+                    CannyFrame = getCannyImage();
+                }
+            }
+            else
+            {
+                onceCanny = false;
+                CannyFrame = getCannyImage();
+            }
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             VectorOfVectorOfPoint smallContours = new VectorOfVectorOfPoint();
             List<List<PointF>> scaledContours = new List<List<PointF>>();
@@ -264,13 +286,34 @@ namespace FotoRobot
                 isCaptureRequired = true;
                 buttonCamera.Image = Properties.Resources.stop;
                 buttonCapture.Enabled = true;
-
+                
                 TCPSend("AIM");
-
+                setImageTwoPanel(false);
                 //networkStream.read
 
             }
             buttonDraw.Enabled = false;
+        }
+
+        private void setImageTwoPanel(bool mode)
+        {
+            if (!mode)
+            {
+                imagePanels.ColumnStyles[0].SizeType = SizeType.Percent;
+                imagePanels.ColumnStyles[0].Width = 0;
+                imagePanels.ColumnStyles[1].SizeType = SizeType.Percent;
+                imagePanels.ColumnStyles[1].Width = 100;
+                //originalView = FunctionalMode = Emgu.CV.UI.ImageBox.FunctionalModeOption.RightClickMenu;
+                //imageView.FunctionalMode = Emgu.CV.UI.ImageBox.FunctionalModeOption.RightClickMenu;
+            }
+            else
+            {
+                imagePanels.ColumnStyles[0].SizeType = SizeType.Percent;
+                imagePanels.ColumnStyles[0].Width = 50;
+                imagePanels.ColumnStyles[1].SizeType = SizeType.Percent;
+                imagePanels.ColumnStyles[1].Width = 50;
+                //imageView.FunctionalMode = Emgu.CV.UI.ImageBox.FunctionalModeOption.PanAndZoom;
+            }
         }
 
         private void buttonCapture_Click(object sender, EventArgs e)
@@ -280,6 +323,7 @@ namespace FotoRobot
             buttonCapture.Enabled = false;
             buttonCamera.Image = Properties.Resources.play;
             TCPSend("WAIT");
+            setImageTwoPanel(true);
         }
 
         private void buttonSliders_Click(object sender, EventArgs e)
@@ -298,11 +342,19 @@ namespace FotoRobot
         Point prev_point = new Point(0, 0);
         private void imageView_MouseMove(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if (isCaptureRequired)
             {
-                ROI.Location = Point.Add(Point.Subtract(e.Location, (Size)prev_point), (Size)ROI.Location);
+                if (e.Button == MouseButtons.Left)
+                {
+                    ROI.Location = Point.Add(Point.Subtract(e.Location, (Size)prev_point), (Size)ROI.Location);
+                }
+                prev_point = e.Location;
             }
-            prev_point = e.Location;
+            if (isProcessingRequired)
+            {
+                eraser.Location = Point.Add(Point.Subtract(e.Location, (Size)prev_point), (Size)eraser.Location);
+                prev_point = e.Location;
+            }
         }
 
         private void imageView_MouseDown(object sender, MouseEventArgs e)
@@ -326,18 +378,21 @@ namespace FotoRobot
 
         private void buttonDraw_Click(object sender, EventArgs e)
         {
-            if (!isPointsSendingRequired)
+            if (isConnected)
             {
-                isPointsSendingRequired = true;
-                buttonCapture.Enabled = false;
-                buttonDraw.Image = Properties.Resources.stop;
-                saveImage();
-            }
-            else
-            {
-                isPointsSendingRequired = false;
-                buttonCapture.Enabled = true;
-                buttonDraw.Image = Properties.Resources.paint;
+                if (!isPointsSendingRequired)
+                {
+                    isPointsSendingRequired = true;
+                    buttonCapture.Enabled = false;
+                    buttonDraw.Image = Properties.Resources.stop;
+                    saveImage();
+                }
+                else
+                {
+                    isPointsSendingRequired = false;
+                    buttonCapture.Enabled = true;
+                    buttonDraw.Image = Properties.Resources.paint;
+                }
             }
         }
 
@@ -633,6 +688,7 @@ namespace FotoRobot
             parameters.paperSize = new Size(210, 297);
             LoadSettings();
             setupCamera();
+            eraser.Size = new Size(20, 20);
             ROIFrame = new Mat();
         }
 
@@ -715,7 +771,10 @@ namespace FotoRobot
             CvInvoke.BitwiseNot(Canvas, Canvas);
             CvInvoke.DrawContours(Canvas, contours, -1, new Emgu.CV.Structure.MCvScalar(0, 0, 0), 1);
             CvInvoke.Flip(Canvas, Canvas, Emgu.CV.CvEnum.FlipType.None);
+            CvInvoke.Rectangle(Canvas, eraser, new Emgu.CV.Structure.MCvScalar(255, 0, 0));
             imageView.Image = Canvas;
+            CvInvoke.Flip(ROIFrame, Canvas, Emgu.CV.CvEnum.FlipType.None);
+            originalView.Image = Canvas;
 
         }
 
@@ -888,7 +947,6 @@ namespace FotoRobot
             }
 
             return false;
-
 
         }
        
