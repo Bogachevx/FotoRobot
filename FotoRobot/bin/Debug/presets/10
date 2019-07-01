@@ -9,17 +9,17 @@
     <Height>515</Height>
   </ROISize>
   <ROIPosition>
-    <X>776</X>
-    <Y>370</Y>
+    <X>592</X>
+    <Y>247</Y>
   </ROIPosition>
-  <cannyThreshold1>22</cannyThreshold1>
-  <cannyThreshold2>69</cannyThreshold2>
-  <approximationEpsilon>413</approximationEpsilon>
-  <minContLength>63</minContLength>
-  <blurValue>5</blurValue>
+  <cannyThreshold1>27</cannyThreshold1>
+  <cannyThreshold2>72</cannyThreshold2>
+  <approximationEpsilon>152</approximationEpsilon>
+  <minContLength>24</minContLength>
+  <blurValue>1</blurValue>
   <isAdaptive>false</isAdaptive>
   <paperSize>
-    <Width>180</Width>
-    <Height>260</Height>
+    <Width>155</Width>
+    <Height>250</Height>
   </paperSize>
 </Parameters>

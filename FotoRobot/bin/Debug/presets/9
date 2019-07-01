@@ -5,21 +5,21 @@
     <Height>1080</Height>
   </cameraResolution>
   <ROISize>
-    <Width>373</Width>
-    <Height>515</Height>
+    <Width>337</Width>
+    <Height>410</Height>
   </ROISize>
   <ROIPosition>
-    <X>776</X>
-    <Y>370</Y>
+    <X>909</X>
+    <Y>401</Y>
   </ROIPosition>
-  <cannyThreshold1>96</cannyThreshold1>
-  <cannyThreshold2>64</cannyThreshold2>
-  <approximationEpsilon>428</approximationEpsilon>
-  <minContLength>27</minContLength>
-  <blurValue>1</blurValue>
+  <cannyThreshold1>38</cannyThreshold1>
+  <cannyThreshold2>85</cannyThreshold2>
+  <approximationEpsilon>183</approximationEpsilon>
+  <minContLength>17</minContLength>
+  <blurValue>3</blurValue>
   <isAdaptive>false</isAdaptive>
   <paperSize>
-    <Width>180</Width>
-    <Height>260</Height>
+    <Width>155</Width>
+    <Height>250</Height>
   </paperSize>
 </Parameters>

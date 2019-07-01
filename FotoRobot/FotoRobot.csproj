@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\icons8-robot-filled-96.ico</ApplicationIcon>
+    <ApplicationIcon>icons8-робот-filled-100 %281%29.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Emgu.CV.UI, Version=4.0.1.3373, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
@@ -117,7 +117,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icons8-robot-filled-96.ico" />
+    <Content Include="icons8-робот-filled-100 %281%29.ico" />
     <Content Include="License-LGPL.txt" />
+    <None Include="Resources\icons8-робот-filled-100 %281%29.png" />
     <None Include="Resources\icons8-settings-filled-64.png" />
     <None Include="Resources\icons8-loadfilled-64.png" />
     <None Include="Resources\icons8-robot-filled-96.ico" />
